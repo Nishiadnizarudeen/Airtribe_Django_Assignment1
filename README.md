@@ -41,9 +41,11 @@ Do not use the development defaults or `DEBUG=true` in a production deployment.
 
 ## Run locally (without Docker)
 
-Install PostgreSQL and create a database and user, then configure `POSTGRES_DB`,
-`POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_HOST`, and `POSTGRES_PORT` in your
-environment. Then run:
+With the Compose database running, the local Django process defaults to
+`localhost:5434` with the development credentials above. If you use a different
+database or credentials, configure `POSTGRES_DB`, `POSTGRES_USER`,
+`POSTGRES_PASSWORD`, `POSTGRES_HOST`, and `POSTGRES_PORT` in your environment.
+Then run:
 
 ```bash
 python -m venv .venv
@@ -52,6 +54,10 @@ pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver
 ```
+
+If your shell already defines `POSTGRES_PORT` as `5432`, override it with
+`export POSTGRES_PORT=5434` before starting Django locally. The Compose app
+container uses `db:5432` instead.
 
 Run the automated API tests with:
 
