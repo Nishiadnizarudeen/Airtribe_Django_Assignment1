@@ -3,7 +3,47 @@
 EventHub is a Django REST Framework API for browsing events, reserving seats,
 and cancelling reservations.
 
-## Setup and run
+## Run with Docker (recommended)
+
+```bash
+docker compose up --build
+```
+
+Compose starts the Django API and PostgreSQL database, waits for PostgreSQL to
+be healthy, and applies migrations before starting the web server. The API is
+available at `http://127.0.0.1:8000/api/`. Visiting
+`http://127.0.0.1:8000/` redirects to the events list. PostgreSQL data persists
+in a Docker volume when the containers are stopped.
+
+For a database client running on your computer, connect to host `localhost`,
+port `5434`, database `eventhub`, user `eventhub`, and the configured
+`POSTGRES_PASSWORD` (the local default is `eventhub-dev-password`). The port is
+bound to localhost only and differs from `5432` to avoid conflicts with other
+local PostgreSQL containers. From the Django container, the database host and
+port remain `db:5432`.
+
+Stop the containers with `Ctrl+C` or `docker compose down`. To also remove the
+database volume and its data, run `docker compose down -v`.
+
+Compose uses development-only defaults for local use. To customize them, create
+a `.env` file in the project root with values such as:
+
+```dotenv
+POSTGRES_DB=eventhub
+POSTGRES_USER=eventhub
+POSTGRES_PASSWORD=replace-with-a-local-password
+DJANGO_SECRET_KEY=replace-with-a-local-secret
+DJANGO_DEBUG=false
+DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
+```
+
+Do not use the development defaults or `DEBUG=true` in a production deployment.
+
+## Run locally (without Docker)
+
+Install PostgreSQL and create a database and user, then configure `POSTGRES_DB`,
+`POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_HOST`, and `POSTGRES_PORT` in your
+environment. Then run:
 
 ```bash
 python -m venv .venv
@@ -12,10 +52,6 @@ pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver
 ```
-
-The API is available at `http://127.0.0.1:8000/api/`. Visiting
-`http://127.0.0.1:8000/` redirects to the events list. The SQLite database is
-created as `db.sqlite3` in the project root.
 
 Run the automated API tests with:
 
